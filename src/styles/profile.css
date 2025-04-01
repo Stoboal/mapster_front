@@ -1,0 +1,127 @@
+.profile-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-header h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.profile-header .username {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.profile-join-date {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.profile-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.profile-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.profile-card-header {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: white;
+    font-size: 20px;
+}
+
+.profile-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.stat-group {
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.stat-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.highlight-stat {
+    color: #3498db;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 18px;
+    background: #eee;
+    border-radius: 4px;
+    margin-top: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg,rebeccapurple, greenyellow);
+    border-radius: 4px;
+    transition: width 1s ease;
+}

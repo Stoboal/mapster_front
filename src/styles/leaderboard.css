@@ -1,0 +1,109 @@
+.leaderboard-container {
+  padding: 0;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboard-card {
+    background-color: rgb(245, 230, 230);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.leaderboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.leaderboard-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.last-updated {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: right;
+  padding: 10px 20px;
+  margin: 0;
+}
+
+.rank-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 16px;
+}
+
+.player-info {
+    flex: 1;
+}
+
+.player-name {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.player-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #777;
+}
+
+.top-player.rank-1 {
+    background-color: linear-gradient(135deg, gold, black);
+    border-left: 4px solid gold;
+}
+
+.top-player.rank-1 .rank-badge {
+    background-color: gold;
+    color: white;
+}
+
+.top-player.rank-2 {
+    border-left: 4px solid silver;
+}
+
+.top-player.rank-2 .rank-badge {
+    background-color: silver;
+    color: white;
+}
+
+.top-player.rank-3 {
+    border-left: 4px solid #cd7f32;
+}
+
+.top-player.rank-3 .rank-badge {
+    background-color: #cd7f32;
+    color: white;
+}
