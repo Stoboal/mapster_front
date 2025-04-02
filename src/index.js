@@ -26,8 +26,8 @@ const TelegramAppInitializer = () => {
                 if (!initData) {
                     throw new Error('Error during getting init data from Telegram WebApp');
                 }
-
-                const authResult = await authService.telegramAuth({initData});
+                const queryString = new URLSearchParams(initData).toString();
+                const authResult = await authService.telegramAuth({ initData: queryString });
 
                 setAuthToken(authResult.token);
                 setUserData(authResult.user);
