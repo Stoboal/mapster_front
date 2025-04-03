@@ -13,21 +13,25 @@ const TelegramAppInitializer = () => {
     useEffect(() => {
         const initApp = async () => {
             try {
+                // PROD SETTINGS
                 if (!window.Telegram || !window.Telegram.WebApp) {
                     throw new Error('This app requires Telegram WebApp');
                 }
 
                 const tg = window.Telegram.WebApp;
-
                 tg.ready();
-
                 const initData = tg.initData;
 
                 if (!initData) {
                     throw new Error('Error during getting init data from Telegram WebApp');
                 }
-                console.log(window.Telegram.WebApp.initData)
                 const authResult = await authService.telegramAuth({ initData });
+
+                // LOCAL SETTING:
+                // const authResult = {
+                //     "token": 'd438666b4fc1ededb9fa06da8fc095cafc2eba15',
+                //     "user": {"id": '1', "username": 'admin'}
+                // };
 
                 setAuthToken(authResult.token);
                 setUserData(authResult.user);

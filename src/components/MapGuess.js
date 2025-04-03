@@ -1,95 +1,145 @@
-import React, {useState, useEffect} from 'react';
-import {GoogleMap, Marker} from '@react-google-maps/api';
-import {useGoogleMapsApi} from '../services/mapsLoader';
-import {useCountdownTimer} from './timer';
+import React, { useState, useEffect, memo } from 'react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
+import { useGoogleMapsApi } from '../services/mapsLoader';
+import { useCountdownTimer } from './timer';
+import { GAME_CONFIG } from '../config/config';
+import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import '../styles/mapGuess.css';
 
-function MapGuess({center, locationId, onSubmitGuess, isExpanded, toggleMapSize}) {
+const TimerWidget = memo(({ seconds }) => {
+    const totalSeconds = GAME_CONFIG.DEFAULT_TIMER_SECONDS;
+    const radius = 36;
+    const circumference = 2 * Math.PI * radius;
+
+    const safeTotalSeconds = totalSeconds > 0 ? totalSeconds : 1;
+    const safeSeconds = Math.max(0, seconds);
+    const progress = safeSeconds / safeTotalSeconds;
+
+    const offset = circumference * (1 - Math.min(progress, 1));
+
+    let progressColorClass = '';
+    if (safeSeconds <= 10) {
+        progressColorClass = 'danger';
+    } else if (safeSeconds <= 30) {
+        progressColorClass = 'warning';
+    }
+
+    const formattedTime = `${Math.floor(safeSeconds / 60)}:${String(safeSeconds % 60).padStart(2, '0')}`;
+
+    return (
+        <div className="timer-widget">
+            <svg className="timer-svg" viewBox="0 0 80 80">
+                <circle
+                    className="timer-circle-bg"
+                    cx="40"
+                    cy="40"
+                    r={radius}
+                />
+                <circle
+                    className={`timer-circle-progress ${progressColorClass}`}
+                    cx="40"
+                    cy="40"
+                    r={radius}
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                />
+            </svg>
+            <div className="timer-text">{formattedTime}</div>
+        </div>
+    );
+});
+
+const mapOptionsConfig = {
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    clickableIcons: false,
+};
+const mapOptionsSmall = { ...mapOptionsConfig, zoomControl: false };
+const mapOptionsLarge = { ...mapOptionsConfig, zoomControl: true };
+
+
+function MapGuess({ center, locationId, onSubmitGuess, isExpanded, toggleMapSize }) {
     const [marker, setMarker] = useState(null);
-    const {isLoaded} = useGoogleMapsApi();
-    const {seconds, startTimer, stopTimer, formattedTime} = useCountdownTimer();
+    const { isLoaded } = useGoogleMapsApi();
+    const { seconds, startTimer, stopTimer } = useCountdownTimer();
 
     useEffect(() => {
-        if (center && marker === null) {
+        if (center) {
             startTimer();
         }
     }, [center]);
 
-
     const handleMapClick = (event) => {
-        setMarker({
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng()
-        });
+        if (event.latLng && typeof event.latLng.lat === 'function' && typeof event.latLng.lng === 'function') {
+           setMarker({
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng()
+            });
+        } else {
+            console.error("Invalid map click event:", event);
+        }
     };
 
     const handleConfirmGuess = () => {
         if (marker) {
-            const elapsedTime = stopTimer();
+            const currentTime = stopTimer();
+            const duration = GAME_CONFIG.DEFAULT_TIMER_SECONDS - seconds;
 
             onSubmitGuess({
                 lat: marker.lat,
                 lng: marker.lng,
-                duration: elapsedTime,
+                duration: Math.max(0, duration),
                 location_id: locationId
             });
+            setMarker(null);
         }
     };
 
-    if (!isLoaded) {
-        return <div className="loader"><span></span><p>Map loading...</p></div>;
+    const handleCancelGuess = () => {
+        setMarker(null);
+    }
+
+    if (!isLoaded || !center) {
+        return null;
     }
 
     return (
-        <>
-            <div className="stats-panel">
-                <p>Time left: {formattedTime}</p>
-            </div>
+        <div className="map-guess-ui-container">
+            <TimerWidget seconds={seconds} />
 
             <div className={`map-container ${isExpanded ? 'map-large' : 'map-small'}`}>
                 <GoogleMap
-                    mapContainerStyle={{width: '100%', height: '100%'}}
+                    mapContainerStyle={{ width: '100%', height: '100%', borderRadius: 'inherit' }}
                     center={center}
                     zoom={isExpanded ? 3 : 1}
                     onClick={handleMapClick}
-                    options={{
-                        zoomControl: false,
-                        mapTypeControl: isExpanded,
-                        streetViewControl: false,
-                        fullscreenControl: false,
-                    }}
+                    options={isExpanded ? mapOptionsLarge : mapOptionsSmall}
                 >
-                    {marker && <Marker position={marker}/>}
+                    {marker && <Marker position={marker} />}
                 </GoogleMap>
 
-                {isExpanded ? (
-                    <button
-                        className="btn btn-secondary"
-                        style={{position: 'absolute', top: '10px', right: '10px'}}
-                        onClick={toggleMapSize}
-                    >
-                        Collapse
-                    </button>
-                ) : (
-                    <button
-                        className="btn btn-secondary"
-                        style={{position: 'absolute', top: '10px', right: '10px'}}
-                        onClick={toggleMapSize}
-                    >
-                        Expand
-                    </button>
-                )}
+                <button
+                    className="btn map-toggle-button"
+                    onClick={toggleMapSize}
+                    title={isExpanded ? 'Collapse Map' : 'Expand Map'}
+                >
+                    {isExpanded ? <MdExpandLess size="1.5em"/> : <MdExpandMore size="1.5em"/>}
+                </button>
             </div>
 
             {marker && (
                 <div className="confirmation-panel">
-                    <p>Are you sure?</p>
-                    <button className="btn btn-success" onClick={handleConfirmGuess}>
-                        Accept
+                    <p>Confirm?</p>
+                    <button className="btn btn-secondary btn-sm" onClick={handleCancelGuess}>
+                        Cancel
+                    </button>
+                    <button className="btn btn-success btn-sm" onClick={handleConfirmGuess}>
+                        Confirm
                     </button>
                 </div>
             )}
-        </>
+        </div>
     );
 }
 

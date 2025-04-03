@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {locationService} from "../services/api";
 import '../styles/leaderboard.css';
 
-function Leaderboard() {
+function Leaderboard({user}) {
     const [leaderboard, setLeaderboard] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
     const [filter, setFilter] = useState('score');
+    const [sortOrder, setSortOrder] = useState('desc')
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
@@ -31,85 +32,110 @@ function Leaderboard() {
         fetchLeaderboard();
     }, []);
 
-    const sortedLeaderboard = React.useMemo(() => {
+    const sortedLeaderboard = useMemo(() => {
         if (!Array.isArray(leaderboard)) return [];
 
-        return [...leaderboard].sort((a, b) => {
-            if (filter === 'score') return b.score - a.score;
-            if (filter === 'games') return b.games - a.games;
-            if (filter === 'average') return b.score_for_game - a.score_for_game;
-            return 0;
+        const sorted = [...leaderboard].sort((a, b) => {
+            let compareA, compareB;
+            switch (filter) {
+                case 'games':
+                    compareA = a.games || 0;
+                    compareB = b.games || 0;
+                    break;
+                case 'average':
+                    compareA = a.score_for_game || 0;
+                    compareB = b.score_for_game || 0;
+                    break;
+                case 'score':
+                default:
+                    compareA = a.score || 0;
+                    compareB = b.score || 0;
+                    break;
+            }
+            return compareB - compareA;
         });
-    }, [leaderboard, filter]);
+        return sorted;
+
+    }, [leaderboard, filter, sortOrder]);
 
     if (loading) return (
         <div className="leaderboard-loading">
             <div className="loader-spinner"></div>
-            <p>Loading...</p>
+            <p>Loading Leaderboard...</p>
         </div>
     );
-
     if (error) return <div className="leaderboard-error">{error}</div>;
+
+    const currentUsername = user ? user.username : null;
 
     return (
         <div className="leaderboard-container">
-            <h2 className="leaderboard-title">🏆 Leaderboard</h2>
-
-            {lastUpdated && (
-                <p className="last-updated">
-                    Last update: {new Date(lastUpdated).toLocaleString('ru-RU')}
-                </p>
-            )}
-
-            <div className="leaderboard-filters">
-                <span>Sorting: </span>
-                <button
-                    className={`filter-btn ${filter === 'score' ? 'active' : ''}`}
-                    onClick={() => setFilter('score')}
-                >
-                    Score
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'games' ? 'active' : ''}`}
-                    onClick={() => setFilter('games')}
-                >
-                    Games
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'average' ? 'active' : ''}`}
-                    onClick={() => setFilter('average')}
-                >
-                    Average
-                </button>
+            <div className="leaderboard-header">
+                <h2 className="leaderboard-title">🏆Leaderboard</h2>
+                <div className="leaderboard-controls">
+                    <div className="leaderboard-filters">
+                        <span className="filter-label">Sort:</span>
+                        <button
+                            className={`filter-btn ${filter === 'score' ? 'active' : ''}`}
+                            onClick={() => setFilter('score')}
+                        >
+                            Score
+                        </button>
+                        <button
+                            className={`filter-btn ${filter === 'games' ? 'active' : ''}`}
+                            onClick={() => setFilter('games')}
+                        >
+                            Games
+                        </button>
+                        <button
+                            className={`filter-btn ${filter === 'average' ? 'active' : ''}`}
+                            onClick={() => setFilter('average')}
+                        >
+                            Average
+                        </button>
+                    </div>
+                    {lastUpdated && (
+                        <p className="last-updated">
+                            Updated: {new Date(lastUpdated).toLocaleString('en-EN')}
+                        </p>
+                    )}
+                </div>
             </div>
 
-            <div className="leaderboard-wrapper">
-                {sortedLeaderboard.map((player, index) => (
-                    <div
-                        key={`${player.username}-${index}`}
-                        className={`leaderboard-card ${index < 3 ? `top-player rank-${index + 1}` : ''}`}
-                    >
-                        <div className="rank-badge">{index + 1}</div>
-                        <div className="player-info">
-                            <h3 className="player-name">{player.username}</h3>
-                            <div className="player-stats">
-                                <div className="stat">
-                                    <span className="stat-value">{player.score}</span>
-                                    <span className="stat-label">points</span>
-                                </div>
-                                <div className="stat">
-                                    <span className="stat-value">{player.games}</span>
-                                    <span className="stat-label">Games</span>
-                                </div>
-                                <div className="stat">
-                                            <span
-                                                className="stat-value">{player.score_for_game ? player.score_for_game.toFixed(1) : '0.0'}</span>
-                                    <span className="stat-label">Average score</span>
+            <div className="leaderboard-list">
+                {sortedLeaderboard.length > 0 ? (
+                    sortedLeaderboard.map((player, index) => {
+                        // Проверяем, является ли эта строка строкой текущего пользователя
+                        const isCurrentUser = currentUsername && player.username === currentUsername;
+
+                        return (
+                            <div
+                                key={player.username} // Или player.id
+                                className={
+                                    `leaderboard-row ${index < 3 ? `rank-${index + 1}` : ''}` +
+                                    // Добавляем класс 'is-current-user' если условие истинно
+                                    `${isCurrentUser ? ' is-current-user' : ''}`
+                                }
+                            >
+                                <div className="leaderboard-rank">{index + 1}</div>
+                                <div className="leaderboard-player">{player.username}</div>
+                                <div className="leaderboard-stat score">{player.score || 0}</div>
+                                <div className="leaderboard-stat games">{player.games || 0}</div>
+                                <div className="leaderboard-stat average">
+                                    {(player.score_for_game || 0).toFixed(1)}
                                 </div>
                             </div>
-                        </div>
+                        );
+                    })
+                ) : (
+                    <div style={{
+                        padding: 'var(--spacing-lg)',
+                        textAlign: 'center',
+                        color: 'var(--color-text-secondary)'
+                    }}>
+                        Leaderboard is empty.
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

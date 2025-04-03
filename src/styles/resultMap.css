@@ -1,34 +1,179 @@
+.marker-label {
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+    text-shadow: 1px 1px 2px white;
+}
+
 .result-map-container {
-    margin: 20px 0;
-    border-radius: 10px;
+    height: 350px;
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    position: relative;
 }
-.results-stats {
+
+.result-stats-new {
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--spacing-lg);
+}
+
+.result-stats-new h3 {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
 }
-.stats-grid {
+
+.score-highlight {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.score-value {
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+}
+.score-value .unit {
+    font-size: 0.4em;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-secondary);
+    margin-left: var(--spacing-sm);
+    vertical-align: baseline;
+}
+
+.score-label {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+
+.comparison-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: var(--spacing-lg);
 }
-.stat-item {
+
+.comparison-block {
+    background-color: var(--color-background);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
     text-align: center;
-    padding: 10px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
 }
-.stat-item p {
-    margin: 5px 0;
+
+.comparison-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-lg);
 }
-.score {
-    grid-column: span 2;
-    background-color: #e8f5e9;
+.comparison-title .icon {
+    font-size: 1.4em;
+    color: var(--color-primary);
+    vertical-align: bottom;
+}
+
+.comparison-values {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.value-group {
+    text-align: center;
+    min-width: 80px;
+}
+
+.value-player,
+.value-average {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.2;
+    word-break: break-all;
+}
+.value-player {
+}
+.value-player .comparison-icon {
+     margin-left: 5px;
+     vertical-align: middle;
+     font-size: 0.8em;
+}
+
+.value-player.better {
+    color: var(--color-success);
+}
+.value-player.worse {
+    color: var(--color-danger);
+}
+
+.value-average {
+    color: var(--color-text-secondary);
+    font-size: 1.2rem;
+}
+
+.value-unit {
+    font-size: 0.7em;
+    color: var(--color-text-secondary);
+    margin-left: 2px;
+    vertical-align: baseline;
+}
+
+.comparison-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 600px) {
+    .score-value {
+        font-size: 3rem;
+    }
+    .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    .comparison-values {
+        justify-content: center;
+    }
+    .value-player, .value-average {
+        font-size: 1.5rem;
+    }
+    .result-map-container {
+        height: 250px;
+    }
+}
+
+.results-stats, .stats-grid, .stat-item, .score {
+     display: none !important;
+}
+
+.loading-map {
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
 }

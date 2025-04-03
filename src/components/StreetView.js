@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useGoogleMapsApi} from '../services/mapsLoader';
 import '../styles/streetView.css';
 
-function StreetView({coordinates, locationId}) {
+function StreetView({coordinates}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [panorama, setPanorama] = useState(null);

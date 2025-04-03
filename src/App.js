@@ -9,7 +9,7 @@ import Leaderboard from './components/Leaderboard';
 import {locationService} from './services/api';
 
 
-function App({ user }) {
+function App({user}) {
     const [coordinates, setCoordinates] = useState(null);
     const [locationId, setLocationId] = useState(null);
     const [gameActive, setGameActive] = useState(false);
@@ -202,7 +202,7 @@ function App({ user }) {
                             </div>
                         </header>
                         <div className="app-content">
-                            <Leaderboard/>
+                            <Leaderboard user={user}/>
                         </div>
                     </>
                 );
@@ -225,29 +225,38 @@ function App({ user }) {
                                 toggleMapSize={toggleMapSize}
                             />
                         ) : (
-                            gameStats && guessedLocation && (
-                                <div className="result-overlay">
-                                    <ResultMap
-                                        actualLocation={coordinates}
-                                        guessedLocation={guessedLocation}
-                                        gameStats={gameStats}
-                                    />
-                                    <div className="game-stats">
-                                        <h3>Results</h3>
-                                        <p>Distance: {gameStats.distance} km</p>
-                                        <p>Time: {gameStats.duration} s</p>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={startNewGame}
-                                        >
-                                            New game
-                                        </button>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={returnToMainMenu}
-                                        >
-                                            Main menu
-                                        </button>
+                            gameStats && guessedLocation && coordinates && (
+                                <div className="modal-overlay open"
+                                     onClick={returnToMainMenu}>
+                                    <div
+                                        className="modal-content"
+                                        style={{width: '90%', maxWidth: '800px'}}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <div className="modal-header">
+                                            <h3 className="modal-title">Round Over!</h3>
+                                        </div>
+                                        <div className="modal-body">
+                                            <ResultMap
+                                                actualLocation={coordinates}
+                                                guessedLocation={guessedLocation}
+                                                gameStats={gameStats}
+                                            />
+                                        </div>
+                                        <div className="modal-footer result-actions">
+                                            <button
+                                                className="btn btn-secondary"
+                                                onClick={returnToMainMenu}
+                                            >
+                                                Main Menu
+                                            </button>
+                                            <button
+                                                className="btn btn-primary"
+                                                onClick={startNewGame}
+                                            >
+                                                Play Again
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )
@@ -255,7 +264,7 @@ function App({ user }) {
                     </div>
                 );
             default:
-                return <MainMenu onStartGame={startNewGame}/>;
+                return <MainMenu /* ... */ />;
         }
     };
 
@@ -263,33 +272,23 @@ function App({ user }) {
         <div className="App">
             {renderContent()}
             {showProfileModal && (
-                <div style={modalStyle}>
-                    <div style={modalContentStyle}>
-                        <button style={closeButtonStyle} onClick={closeModals}>×</button>
-                        <header className="modal-header">
-                        </header>
-                        <div className="app-content">
-                            <Profile/>
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn btn-primary" onClick={closeModals}>
-                                Close
+                <div className="modal-overlay open">
+                    <div className="modal-content">
+                        <div className="modal-body">
+                            <button style={closeButtonStyle} onClick={closeModals} className="modal-close-btn">×
                             </button>
+                            <Profile/>
                         </div>
                     </div>
                 </div>
             )}
             {showLeaderboardModal && (
-                <div style={modalStyle}>
-                    <div style={modalContentStyle}>
-                        <button style={closeButtonStyle} onClick={closeModals}>×</button>
-                        <div className="app-content">
-                            <Leaderboard/>
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn btn-primary" onClick={closeModals}>
-                                Close
+                <div className="modal-overlay open">
+                    <div className="modal-content">
+                        <div className="modal-body">
+                            <button style={closeButtonStyle} onClick={closeModals} className="modal-close-btn">×
                             </button>
+                            <Leaderboard user={user}/>
                         </div>
                     </div>
                 </div>

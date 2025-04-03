@@ -1,23 +1,45 @@
 .street-view-container {
-    flex: 1;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 300px;
-
+  flex-grow: 1;
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  background-color: var(--color-border);
 }
 
 #street-view-panorama {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.error-message {
-    background-color: rgba(231, 76, 60, 0.9);
-    color: white;
-    padding: 1rem;
-    border-radius: 8px;
+/* Loader positioned inside */
+.street-view-container .loader-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    min-height: auto;
+}
+
+/* Error message positioned inside */
+.street-view-container .error-message {
+    position: absolute;
+    top: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
     max-width: 80%;
-    margin: 0 auto;
-    text-align: center;
+    margin: 0;
+}
+
+/* Hide default Google Maps UI elements if needed */
+#street-view-panorama .gm-style-cc,
+#street-view-panorama .gmnoprint,
+#street-view-panorama .gm-fullscreen-control {
+    /* display: none; Example if controls are fully custom */
 }
